@@ -19,7 +19,7 @@ const Prices = React.createClass({
     }
   },
   componentDidUpdate() {
-    localStorage.products= JSON.stringify(this.state.products)
+    localStorage.products = JSON.stringify(this.state.products)
   },
   changeName(e) {
     this.setState({name: e.target.value})
@@ -48,14 +48,19 @@ const Prices = React.createClass({
 
   },
   render() {
+    console.log(this.state.products)
     return (
+
       <div>
+        <form action="">
         <input onChange={this.changeName} type="text" value={this.state.name} placeholder="Product Name"/>
         <input onChange={this.changePrice} type="number" value={this.state.price} placeholder="Produt Price"/>
         <input onChange={this.changeDescription} type="text" value={this.state.description} placeholder="Product Description"/>
         <button onClick={this.addProduct} type="button">Add Product</button>
+        </form>
+
         <br/><br/>
-        <TablePrices deleteProducts={this.deleteProducts} editProducts={this.editProducts} products={this.state.products}/>
+        <TablePrices products={this.state.products} deleteProducts={this.deleteProducts} editProducts={this.editProducts} />
       </div>
     )
   }

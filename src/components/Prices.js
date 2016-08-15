@@ -4,6 +4,11 @@ import uuid from 'uuid'
 //Sets up a list of products 
 const Prices = React.createClass({
   getInitialState() {
+    let products
+    try {
+      products = JSON.parse(localStorage.products)
+    }
+    catch
     return {
       products: [],
       name: "",
@@ -87,9 +92,9 @@ const TablePrices = React.createClass({
       }
     }
   },
-  setDelete() {
-    
-  }
+  setDelete(id) {
+    this.props.deleteProducts(id)
+  },
   changeName(e) {
     this.setState({name: e.target.value})
   },
@@ -107,7 +112,7 @@ const TablePrices = React.createClass({
                 <td>{val.price}</td>
                 <td>{val.description}</td>
                 <td><button onClick={this.setInput.bind(null, val.id)} type="button">Edit</button></td>
-                <td><button type="button">Delete</button></td>
+                <td><button onClick={this.setDelete.bind(null, val.id)} type="button">Delete</button></td>
             </tr>
     });
     if (this.state.setInput) {
@@ -122,7 +127,7 @@ const TablePrices = React.createClass({
               <td> <input onChange={this.changePrice} type="number" value={this.state.price} placeholder="Produt Price"/> </td>
               <td> <input onChange={this.changeDescription} type="text" value={this.state.description} placeholder="Product Description"/> </td>
               <td><button onClick={this.setInput.bind(null, val.id)} type="button">Edit</button></td>
-              <td><button type="button">Delete</button></td>
+              <td><button onClick={this.setDelete.bind(null, val.id)} type="button">Delete</button></td>
           </tr>
         }
 
@@ -131,7 +136,7 @@ const TablePrices = React.createClass({
                 <td>{val.price}</td>
                 <td>{val.description}</td>
                 <td><button onClick={this.setInput.bind(null, val.id)} type="button">Edit</button></td>
-                <td><button type="button">Delete</button></td>
+                <td><button onClick={this.setDelete.bind(null, val.id)} type="button">Delete</button></td>
             </tr>
       });
     }

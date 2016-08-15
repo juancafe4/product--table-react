@@ -70,7 +70,8 @@ const TablePrices = React.createClass({
       description: "",
       price: 0.00,
       nameReverse: false,
-      priceReverse: false
+      priceReverse: false,
+      descriptionReverse: false
     }
   },
   componentWillReceiveProps(nextProps) {
@@ -112,7 +113,6 @@ const TablePrices = React.createClass({
     this.setState({description: e.target.value})
   },
   sortByName(e) {
-    console.log('this.state.products', this.state.products)
 
     if (!this.state.nameReverse) {
       this.state.products.sort((a, b) => {
@@ -135,7 +135,45 @@ const TablePrices = React.createClass({
       })
     }
 
-    this.setState({nameReverse: !this.state.nameReverse})
+    this.setState({products: this.state.products, nameReverse: !this.state.nameReverse})
+  },
+  sortByPrice(e) {
+    console.log(this.state.priceReverse)
+    if (!this.state.priceReverse) {
+      this.state.products.sort((a, b) => {  
+        return a.price - b.price
+      })
+
+    } else {
+      this.state.products.sort((a, b) => {
+        return b.price - a.price
+      })
+    }
+    this.setState({products: this.state.products, priceReverse: !this.state.priceReverse})
+  },
+  sortByDescription(e) {
+    if (!this.state.descriptionReverse) {
+      this.state.products.sort((a, b) => {
+        if (a.description < b.description)
+          return -1;
+        if (a.name > b.name)
+          return 1;
+      
+        return 0;
+      })
+
+    } else {
+      this.state.products.sort((a, b) => {
+        if (b.description < a.description)
+          return -1;
+        if (b.description > a.description)
+          return 1;
+      
+        return 0;
+      })
+    }
+
+    this.setState({products: this.state.products, descriptionReverse: !this.state.descriptionReverse})
   },
   render() {
     let trs = this.state.products.map(val => {
@@ -177,8 +215,8 @@ const TablePrices = React.createClass({
         <thead>
           <tr>
             <th> <button onClick={this.sortByName}>Name</button></th>
-            <th> <button>Price $$$</button></th>
-            <th>Description</th>
+            <th> <button onClick={this. sortByPrice}>Price $$$</button></th>
+            <th><button onClick={this. sortByDescription}>Description</button></th>
             <th>Edit</th>
             <th>Delete</th>
           </tr>

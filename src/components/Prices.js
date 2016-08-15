@@ -1,5 +1,5 @@
 import React from 'react'
-
+import uuid from 'uuid'
 
 //Sets up a list of products 
 const Prices = React.createClass({
@@ -22,10 +22,11 @@ const Prices = React.createClass({
   },
   addProduct(e) {
     let {name, price, description} = this.state
-    
+    let id = uuid()
     if (name && price && description) {
-      let newProducts = this.state.products.concat({name, price, description})
-      this.setState({products: newProducts})
+      let newProducts = this.state.products.concat({id, name, price, description})
+      this.setState({products: newProducts,
+        name: "", price: 0.00, description: ""})
     }
 
   },
@@ -33,7 +34,7 @@ const Prices = React.createClass({
     return (
       <div>
         <input onChange={this.changeName} type="text" value={this.state.name} placeholder="Product Name"/>
-        <input onChange={this.changePrice} type="number" value={this.price} placeholder="Produt Price"/>
+        <input onChange={this.changePrice} type="number" value={this.state.price} placeholder="Produt Price"/>
         <input onChange={this.changeDescription} type="text" value={this.state.description} placeholder="Product Description"/>
         <button onClick={this.addProduct} type="button">Add Product</button>
         <br/><br/>
@@ -44,21 +45,42 @@ const Prices = React.createClass({
 })
 
 const TablePrices = React.createClass({
+  getInitialState() {
+    return {
+      products: [],
+      setInput: {}
+    }
+  },
   componentWillReceiveProps(nextProps) {
-    console.log('next props ', nextProps.products)
+    this.setState({products: nextProps.products})
+  },
+  setInput(e) {
+    console.log('click')
   },
   render() {
+    let trs = this.state.products.map((val ,index) => {
+      return <tr key={val.id}> 
+                <td>{val.name}</td>
+                <td>{val.price}</td>
+                <td>{val.description}</td>
+                <td><button type="button">Edit</button></td>
+                <td><button onClick={this.setInput} type="button">Delete</button></td>
+            </tr>
+    })
     return (
       <table>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Price $$$</th>
+            <th> <button>Name</button></th>
+            <th><button>Price $$$</button></th>
             <th>Description</th>
             <th>Edit</th>
             <th>Delete</th>
           </tr>
         </thead>
+        <tbody>
+          {trs}
+        </tbody>
       </table>
     )
   }

@@ -4,17 +4,22 @@ import uuid from 'uuid'
 //Sets up a list of products 
 const Prices = React.createClass({
   getInitialState() {
-    let products
+    
     try {
-      products = JSON.parse(localStorage.products)
+      var products = JSON.parse(localStorage.products)
     }
-    catch
+    catch(e) {
+      var products = []
+    }
     return {
-      products: [],
+      products: products,
       name: "",
       price: 0.00,
       description: ""
     }
+  },
+  componentDidUpdate() {
+    localStorage.products= JSON.stringify(this.state.products)
   },
   changeName(e) {
     this.setState({name: e.target.value})
@@ -63,7 +68,9 @@ const TablePrices = React.createClass({
       setInput: "",
       name: "",
       description: "",
-      price: 0.00
+      price: 0.00,
+      nameReverse: false,
+      priceReverse: false
     }
   },
   componentWillReceiveProps(nextProps) {
@@ -104,6 +111,32 @@ const TablePrices = React.createClass({
   changeDescription(e) {
     this.setState({description: e.target.value})
   },
+  sortByName(e) {
+    console.log('this.state.products', this.state.products)
+
+    if (!this.state.nameReverse) {
+      this.state.products.sort((a, b) => {
+        if (a.name < b.name)
+          return -1;
+        if (a.name > b.name)
+          return 1;
+      
+        return 0;
+      })
+
+    } else {
+      this.state.products.sort((a, b) => {
+        if (b.name < a.name)
+          return -1;
+        if (b.name > a.name)
+          return 1;
+      
+        return 0;
+      })
+    }
+
+    this.setState({nameReverse: !this.state.nameReverse})
+  },
   render() {
     let trs = this.state.products.map(val => {
 
@@ -118,8 +151,7 @@ const TablePrices = React.createClass({
     if (this.state.setInput) {
 
       trs = this.state.products.map(val => {
-        console.log('val.id ', val.id)
-        console.log('this.state.setInput ', this.state.setInput)
+
         if (this.state.setInput === val.id) {
 
           return <tr key={val.id}> 
@@ -144,8 +176,8 @@ const TablePrices = React.createClass({
       <table>
         <thead>
           <tr>
-            <th> <button>Name</button></th>
-            <th><button>Price $$$</button></th>
+            <th> <button onClick={this.sortByName}>Name</button></th>
+            <th> <button>Price $$$</button></th>
             <th>Description</th>
             <th>Edit</th>
             <th>Delete</th>

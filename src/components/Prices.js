@@ -20,6 +20,13 @@ const Prices = React.createClass({
   changeDescription(e) {
     this.setState({description: e.target.value})
   },
+  editProducts(products) {
+    this.setState({products: products})
+  },
+  deleteProducts(id) {
+    let newProducts = this.state.products.filter(val => val.id !== id)
+    this.setState({products: newProducts})
+  },
   addProduct(e) {
     let {name, price, description} = this.state
     let id = uuid()
@@ -38,7 +45,7 @@ const Prices = React.createClass({
         <input onChange={this.changeDescription} type="text" value={this.state.description} placeholder="Product Description"/>
         <button onClick={this.addProduct} type="button">Add Product</button>
         <br/><br/>
-        <TablePrices products={this.state.products}/>
+        <TablePrices deleteProducts={this.deleteProducts} editProducts={this.editProducts} products={this.state.products}/>
       </div>
     )
   }
@@ -49,19 +56,48 @@ const TablePrices = React.createClass({
     return {
       products: [],
       setInput: "",
-      name: ""
+      name: "",
+      description: "",
+      price: 0.00
     }
   },
   componentWillReceiveProps(nextProps) {
     this.setState({products: nextProps.products})
   },
   setInput(id) {
-    this.setState({
-      setInput: id
-    });
-  },
-  changeName(e) {
+    if (!this.state.setInput) {
+      this.setState({
+        setInput: id
+      });
+    }
 
+    else if (this.state.setInput === id) {
+      let {name, price, description} = this.state
+      if (name && price && description) {
+        this.state.products.forEach(val => {
+          if (val.id === id) {
+            val.name = name
+            val.price = price
+            val.description = description
+          }
+        })
+
+        this.setState({name: "", price: 0.00, description: "", setInput: ""})
+        this.props.editProducts(this.state.products);
+      }
+    }
+  },
+  setDelete() {
+    
+  }
+  changeName(e) {
+    this.setState({name: e.target.value})
+  },
+  changePrice(e) {
+    this.setState({price: e.target.value})
+  },
+  changeDescription(e) {
+    this.setState({description: e.target.value})
   },
   render() {
     let trs = this.state.products.map(val => {
@@ -75,23 +111,28 @@ const TablePrices = React.createClass({
             </tr>
     });
     if (this.state.setInput) {
-      console.log('here')
-      trs = trs.map(val => {
+
+      trs = this.state.products.map(val => {
         console.log('val.id ', val.id)
-        console.log('this.state.setInput ', val.id)
+        console.log('this.state.setInput ', this.state.setInput)
         if (this.state.setInput === val.id) {
 
           return <tr key={val.id}> 
               <td><input onChange={this.changeName} type="text" value={this.state.name} placeholder="Product Name"/></td>
-              <td>{val.price}</td>
-              <td>{val.description}</td>
+              <td> <input onChange={this.changePrice} type="number" value={this.state.price} placeholder="Produt Price"/> </td>
+              <td> <input onChange={this.changeDescription} type="text" value={this.state.description} placeholder="Product Description"/> </td>
               <td><button onClick={this.setInput.bind(null, val.id)} type="button">Edit</button></td>
               <td><button type="button">Delete</button></td>
           </tr>
         }
 
-        else 
-          return val
+        return <tr key={val.id}> 
+                <td>{val.name}</td>
+                <td>{val.price}</td>
+                <td>{val.description}</td>
+                <td><button onClick={this.setInput.bind(null, val.id)} type="button">Edit</button></td>
+                <td><button type="button">Delete</button></td>
+            </tr>
       });
     }
     return (
